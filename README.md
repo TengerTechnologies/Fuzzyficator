@@ -1,5 +1,7 @@
 # Fuzzyficator
 (Work In Progress) A Gcode postprocessing script to add non-planar "Fuzzyskin" to top flat surfaces. 
+Currently it is tested with Prusaslicer and Marlin Flavour gcode. (More slicers and Klipper will come)
+Use it at your on risk.
 
 You can run it with 4 parameters:
 
