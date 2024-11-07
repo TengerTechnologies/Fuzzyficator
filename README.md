@@ -8,11 +8,17 @@ Use it at your on risk.
 The script automatically reads your fuzzyskin settings and applies them to the top surfaces. 
 
 You can overite the settings with:
+
 -resolution (use any number)
+
 -zMin (use any number)
+
 -zMax (use any number)
+
 -connectWalls (use 1 or 0)
+
 -run (use 1 or 0)
+
 -compensateExtrusion (use 1 or 0)
 
 Add the script to your slicers postprocessing tab:
