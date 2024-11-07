@@ -1,11 +1,59 @@
 # Fuzzyficator
 (Work In Progress) A Gcode postprocessing script to add non-planar "Fuzzyskin" to top flat surfaces. 
 
-Currently it is tested with Prusaslicer and Marlin Flavour gcode. (More slicers and Klipper will come)
+There are versions for Bambustudio, Orcaslicer and Prusaslicer. 
 
 Use it at your on risk.
 
+The script automatically reads your fuzzyskin settings and applies them to the top surfaces. 
 
+You can overite the settings with:
+-resolution (use any number)
+-zMin (use any number)
+-zMax (use any number)
+-connectWalls (use 1 or 0)
+-run (use 1 or 0)
+-compensateExtrusion (use 1 or 0)
+
+Add the script to your slicers postprocessing tab:
+
+`"C:\pathToPython\python.exe" "C:\pathToScript\Fuzzyficator_Prusaslicer.py"`
+
+The script will use your Fuzzyskin settings if Fuzzyskin is enabled. compensateExtrusion and connectWalls default to ON.
+
+You can use the settings to override it's defaults by adding them after the script:
+
+`"C:\pathToPython\python.exe" "C:\pathToScript\Fuzzyficator_Prusaslicer.py" -run 1 -zmin 0 -zMax 0.5 -resolution 0.3 -connectWalls 1 -compensateExtrusion 1`
+
+
+
+
+
+# General settings
+
+-resolution sets the size of how to segment the Gcode
+![grafik](https://github.com/user-attachments/assets/ec9a2832-ebee-4b15-a821-e848d71073ec)
+
+-zMin and zMax set the minimal and maximal Z displacement of the segments.
+![grafik](https://github.com/user-attachments/assets/0e9c0c30-0c61-4df0-ae76-dbe2a4c6e381)
+
+-connectWalls sets wether the first segment should not be displaced. 
+![grafik](https://github.com/user-attachments/assets/a2874fcf-e2fa-4440-a6c1-b58d4f6bc080)
+
+-run enables or disables the script
+
+-compensateExtrusion compensates extrusion values for the added distance 
+
+
+
+
+
+
+
+
+# Old standalone version (Do not use anymore)
+
+Only for Prusaslicer. Left in the repo because of the Youtube tutorial. 
 
 You can run it with 4 parameters:
 
