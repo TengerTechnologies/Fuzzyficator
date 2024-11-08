@@ -1,6 +1,8 @@
 # Fuzzyficator
 (Work In Progress) A Gcode postprocessing script to add non-planar "Fuzzyskin" to top flat surfaces. 
 
+(Dear Youtubers if you make a Video about this, I would be glad if you could link to my channel <3 https://www.youtube.com/@tengertechnologies ) 
+
 There are versions for Bambustudio, Orcaslicer and Prusaslicer. 
 
 Use it at your on risk.
@@ -30,8 +32,6 @@ The script will use your Fuzzyskin settings if Fuzzyskin is enabled. compensateE
 You can use the settings to override it's defaults by adding them after the script:
 
 `"C:\pathToPython\python.exe" "C:\pathToScript\Fuzzyficator_Prusaslicer.py" -run 1 -zmin 0 -zMax 0.5 -resolution 0.3 -connectWalls 1 -compensateExtrusion 1`
-
-
 
 
 
