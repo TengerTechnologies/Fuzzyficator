@@ -51,9 +51,11 @@ You can use the settings to override it's defaults by adding them after the scri
 -compensateExtrusion compensates extrusion values for the added distance 
 
 
+# Video Guide
 
 
 
+[![Thumnbnail](http://img.youtube.com/vi/85FJl5P0AoU/0.jpg)](http://www.youtube.com/watch?v=85FJl5P0AoU)
 
 
 
