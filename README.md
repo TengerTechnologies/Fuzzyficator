@@ -1,6 +1,8 @@
 # Fuzzyficator
 (Work In Progress) A Gcode postprocessing script to add non-planar "Fuzzyskin" to top flat surfaces. 
 
+# Important note, if you use Orcaslicer for Bambu printers, use the fuzzyficator_bambustudio.py it works with orca too 
+
 (Dear Youtubers if you make a Video about this, I would be glad if you could link to my channel <3 https://www.youtube.com/@tengertechnologies ) 
 
 There are versions for Bambustudio, Orcaslicer and Prusaslicer. 
