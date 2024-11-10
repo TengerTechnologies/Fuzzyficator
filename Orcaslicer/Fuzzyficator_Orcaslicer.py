@@ -167,7 +167,7 @@ if __name__ == "__main__":
                 new_gcode.append(line)
             elif line.startswith(';LAYER:'):
                 new_gcode.append(line)
-            elif 'G1' in line and 'Z' in line:
+            elif not in_top_solid_infill and 'G1' in line and 'Z' in line: # only change height when it is not doing the top surface
                 # Update the current layer height based on the Z value in the G1 command
                 z_match = re.search(r'Z([-+]?[0-9]*\.?[0-9]+)', line)
                 if z_match:
@@ -203,7 +203,9 @@ if __name__ == "__main__":
                 logging.debug(f"Added original G1 command: {line.strip()}")
                 # Update previous point after adding the original G-code line
                 previous_point = current_point
-            elif in_top_solid_infill and line.startswith('G1') and 'X' in line and 'Y' in line and 'F' in line:
+            elif in_top_solid_infill and line.startswith('G1') and ('X' in line or 'Y' in line or 'Z' in line):
+                # reacts to all travel moves, not only the ones with F included
+                # Extrusion moves are catched due to elif-statements, ordering important!
                 # Extract X, Y, Z coordinates for travel moves
                 coordinates = {param[0]: float(param[1:]) for param in line.split() if param[0] in 'XYZ'}
                 logging.debug(f"Extracted coordinates for travel move: {coordinates}")
