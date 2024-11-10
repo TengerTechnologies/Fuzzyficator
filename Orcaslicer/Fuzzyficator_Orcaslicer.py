@@ -154,13 +154,13 @@ if __name__ == "__main__":
         extruder_relative_mode = True  # Assume extruder is in relative mode for this scenario
 
         for line in gcode_lines:
-            if line.startswith(';TYPE:Top surface'):
+            if line.lower().startswith('; FEATURE: Top surface'.lower()):
                 in_top_solid_infill = True
                 logging.info("Entering top solid infill section")
                 previous_point = None  # Reset previous point at the start of a new top solid infill section
                 previous_extrusion = 0.0  # Reset previous extrusion
                 new_gcode.append(line)
-            elif line.startswith(';TYPE:'):
+            elif line.lower().startswith('; FEATURE:'.lower()):
                 if in_top_solid_infill:
                     logging.info("Exiting top solid infill section")
                 in_top_solid_infill = False
