@@ -19,7 +19,7 @@ You can overite the settings with:
 
 -zMax (use any number)
 
--connectWalls (use 1 or 0)
+-ConnectWalls (use 1 or 0)
 
 -run (use 1 or 0)
 
