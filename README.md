@@ -33,7 +33,7 @@ The script will use your Fuzzyskin settings if Fuzzyskin is enabled. compensateE
 
 You can use the settings to override it's defaults by adding them after the script:
 
-`"C:\pathToPython\python.exe" "C:\pathToScript\Fuzzyficator_Prusaslicer.py" -run 1 -zmin 0 -zMax 0.5 -resolution 0.3 -connectWalls 1 -compensateExtrusion 1`
+`"C:\pathToPython\python.exe" "C:\pathToScript\Fuzzyficator_Prusaslicer.py" -run 1 -zMin 0 -zMax 0.5 -resolution 0.3 -ConnectWalls 1 -compensateExtrusion 1`
 
 
 
