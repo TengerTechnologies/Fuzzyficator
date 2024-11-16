@@ -167,7 +167,13 @@ if __name__ == "__main__":
                 new_gcode.append(line)
             elif line.startswith(';LAYER:'):
                 new_gcode.append(line)
-            elif 'G1' in line and 'Z' in line:
+                
+            elif in_top_solid_infill and line.startswith('G1') and 'X' in line and 'Y' in line and not 'E' in line and not 'Z' in line:
+                logging.info("Processed a travel move")
+                previous_point = None  # Reset previous point at the start of a new top solid infill section
+                new_gcode.append(line)
+                
+            elif 'G1' in line and 'Z' in line and not 'X' in line:
                 # Update the current layer height based on the Z value in the G1 command
                 z_match = re.search(r'Z([-+]?[0-9]*\.?[0-9]+)', line)
                 if z_match:
