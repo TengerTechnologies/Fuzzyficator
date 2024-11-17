@@ -170,7 +170,17 @@ if __name__ == "__main__":
                 
             elif in_top_solid_infill and line.startswith('G1') and 'X' in line and 'Y' in line and not 'E' in line and not 'Z' in line:
                 logging.info("Processed a travel move")
-                previous_point = None  # Reset previous point at the start of a new top solid infill section
+                
+                coordinates = {param[0]: float(param[1:]) for param in line.split() if param[0] in 'XY'}
+                logging.debug(f"Extracted coordinates: {coordinates}")
+                
+                current_point = (
+                    coordinates.get('X', previous_point[0] if previous_point else 0),
+                    coordinates.get('Y', previous_point[1] if previous_point else 0),
+                    coordinates.get('Z', coordinates.get('Z', current_layer_height))
+                )
+                previous_point = current_point  # Update previous point after travel move
+                
                 new_gcode.append(line)
                 
             elif 'G1' in line and 'Z' in line and not 'X' in line:
