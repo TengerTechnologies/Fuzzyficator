@@ -1,15 +1,14 @@
 # Fuzzyficator
-(Work In Progress) A Gcode postprocessing script to add non-planar "Fuzzyskin" to top flat surfaces. 
-
-# Important note, if you use Orcaslicer for Bambu printers, use the fuzzyficator_bambustudio.py it works with orca too 
+(Work In Progress) A Gcode postprocessing script to add non-planar "Fuzzyskin" to top flat surfaces and overhangs.
 
 (Dear Youtubers if you make a Video about this, I would be glad if you could link to my channel <3 https://www.youtube.com/@tengertechnologies ) 
 
-There are versions for Bambustudio, Orcaslicer and Prusaslicer. 
+The Fuzzyficator.py works for Bambustudio, Orcaslicer and Prusaslicer. 
 
 Use it at your on risk.
 
-The script automatically reads your fuzzyskin settings and applies them to the top surfaces. 
+The Fuzzyficator script automatically reads your fuzzyskin settings and applies them to the top and bottom surfaces. 
+If you want to use the overhang fuzzyskin, enable supports. Otherwise it will end up in a failed overhang.
 
 You can overite the settings with:
 
@@ -19,21 +18,34 @@ You can overite the settings with:
 
 -zMax (use any number)
 
--ConnectWalls (use 1 or 0)
+-connectWalls (use 1 or 0)
 
 -run (use 1 or 0)
 
 -compensateExtrusion (use 1 or 0)
 
+-topSurface (use 1 or 0)
+
+-lowerSurface (use 1 or 0)
+
+-fuzzySpeed (use any number)
+
+-minSupportDistance (use any number)
+
+-bridgeCompensationMultiplier(use any number)
+
+
+
 Add the script to your slicers postprocessing tab:
 
-`"C:\pathToPython\python.exe" "C:\pathToScript\Fuzzyficator_Prusaslicer.py"`
+`"C:\pathToPython\python.exe" "C:\pathToScript\Fuzzyficator.py"`
+
 
 The script will use your Fuzzyskin settings if Fuzzyskin is enabled. compensateExtrusion and connectWalls default to ON.
 
 You can use the settings to override it's defaults by adding them after the script:
 
-`"C:\pathToPython\python.exe" "C:\pathToScript\Fuzzyficator_Prusaslicer.py" -run 1 -zMin 0 -zMax 0.5 -resolution 0.3 -ConnectWalls 1 -compensateExtrusion 1`
+`"C:\pathToPython\python.exe" "C:\pathToScript\Fuzzyficator.py" -run 1 -zMin 0 -zMax 0.5 -resolution 0.3 -ConnectWalls 1 -compensateExtrusion 1` etc.
 
 
 
@@ -52,12 +64,72 @@ You can use the settings to override it's defaults by adding them after the scri
 
 -compensateExtrusion compensates extrusion values for the added distance 
 
+-fuzzySpeed sets the speed for the fuzzy sections in mm/min
+
+-topSurface enables or disables top surface processing
+
+-lowerSurface enables or disables overhang processing 
+
+-bridgeCompensationMultiplier is a factor to multiply the extrusion compensation on overhang layers
+
+-minSupportDistance sets the minimal distance to the support interface 
+
+
+# Fuzzyficator Paint-On
+
+(experimental) A Gcode postprocessing script to add paint-on "Fuzzyskin" to Prusaslicer Orcaslicer and Bambustudio.
+
+
+
+The Fuzzyficator_paintOn.py works for Bambustudio, Orcaslicer and Prusaslicer. 
+
+Use it at your on risk.
+
+The Fuzzyficator script only runs if fuzzyskin is disabled in the slicer. 
+You have to set some things up in the slicers first. I'm still working on this page so for now check the video linked below. 
+
+You can overite the settings with:
+
+-resolution (use any number)
+
+-zMin (use any number)
+
+-zMax (use any number)
+
+-connectWalls (use 1 or 0)
+
+-run (use 1 or 0)
+
+-compensateExtrusion (use 1 or 0)
+
+-topSurface (use 1 or 0)
+
+-lowerSurface (use 1 or 0)
+
+-fuzzySpeed (use any number)
+
+-minSupportDistance (use any number)
+
+-bridgeCompensationMultiplier(use any number)
+
+
+For paint-on only:
+
+-xy_thickness (use any number)
+
+-xy_point_dist (use any number)
+
+
+
+
 
 # Video Guide
 
 
 
 [![Thumnbnail](http://img.youtube.com/vi/85FJl5P0AoU/0.jpg)](http://www.youtube.com/watch?v=85FJl5P0AoU)
+
+
 
 
 
