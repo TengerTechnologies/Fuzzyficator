@@ -127,7 +127,7 @@ For paint-on only:
 
 
 
-[![Thumnbnail](http://img.youtube.com/vi/85FJl5P0AoU/0.jpg)](http://www.youtube.com/watch?v=85FJl5P0AoU)
+[![Thumnbnail](http://img.youtube.com/vi/cNkHfydnUCI/0.jpg)](http://www.youtube.com/watch?v=cNkHfydnUCI)
 
 
 
