@@ -310,7 +310,7 @@ class GCodeProcessor:
         
         
         
-        gcode_lines = self.mark_fuzzy_sections(gcode_lines) 
+        
         # Check for absolute extrusion mode
         for line in gcode_lines:
             if line.strip().startswith('M82'):
@@ -327,7 +327,7 @@ class GCodeProcessor:
                 self.lookup = LOOKUP_TABLES['bambustudio']
         else:
             self.lookup = LOOKUP_TABLES["prusaslicer"]
-
+        gcode_lines = self.mark_fuzzy_sections(gcode_lines) 
         fuzzy_enabled, point_dist, thickness, support_contact_dist = self.process_fuzzy_skin_settings(gcode_lines)
         
         # Apply G-code settings where command line args weren't specified
