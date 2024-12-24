@@ -130,8 +130,26 @@ For paint-on only:
 [![Thumnbnail](http://img.youtube.com/vi/cNkHfydnUCI/0.jpg)](http://www.youtube.com/watch?v=cNkHfydnUCI)
 
 
+# Fuzzyficator Pattern
+
+(experimental) A Gcode postprocessing script to add paint-on Displacement maps to Prusaslicer Orcaslicer and Bambustudio.
 
 
+
+The Fuzzyficator_pattern.py works for Bambustudio, Orcaslicer and Prusaslicer. 
+
+Use it at your on risk.
+
+You will need to have a displacement map for it to work.
+You have to set some things up in the slicers first. I'm still working on this page so for now check the video linked below. 
+
+You need to set:
+
+-run 1
+
+-displacement_map Path\to\displacementMap.png
+
+# Video Guide
 
 # Old standalone version (Do not use anymore)
 
