@@ -57,7 +57,7 @@ You can use the settings to override it's defaults by adding them after the scri
 -zMin and zMax set the minimal and maximal Z displacement of the segments.
 ![grafik](https://github.com/user-attachments/assets/0e9c0c30-0c61-4df0-ae76-dbe2a4c6e381)
 
--connectWalls sets wether the first segment should not be displaced. 
+-connectWalls sets weather the first segment should not be displaced. 
 ![grafik](https://github.com/user-attachments/assets/a2874fcf-e2fa-4440-a6c1-b58d4f6bc080)
 
 -run enables or disables the script
