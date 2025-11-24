@@ -1,0 +1,2 @@
+-zMin 0 -zMax 0.1 -resolution 0.4 Cube1.gcode
+-zMin 0 -zMax 0.1 -resolution 0.4 -lowerSurface 0 -zIni 142.0 -zEnd 200.0 -force BodyFront_1.gcode
