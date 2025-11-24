@@ -76,6 +76,9 @@ class FuzzySkinConfig:
         self.support_contact_dist = None
         self.bridge_compensation_multiplier = float(args.bridgeCompensationMultiplier)
         self.min_support_distance = float(args.minSupportDistance)
+        self.force = args.force
+        self.z_ini = args.zIni
+        self.z_end = args.zEnd
 
     def apply_gcode_settings(self, fuzzy_enabled, point_dist, thickness, support_contact_dist):
         """Apply G-code settings if command line args weren't specified"""
@@ -183,7 +186,7 @@ class GCodeProcessor:
         for line in reversed(gcode_lines):
             if line.startswith(self.lookup["fuzzy_skin"]):
                 fuzzy_skin_value = line.split('=')[-1].strip().lower()
-                if fuzzy_skin_value in self.lookup["fuzzy_skin_values"]:
+                if fuzzy_skin_value in self.lookup["fuzzy_skin_values"] or self.config.force:
                     fuzzy_skin_enabled = True
                 break
 
@@ -276,10 +279,14 @@ class GCodeProcessor:
         elif line.startswith(self.lookup["overhang"]):
             self.has_overhang_in_layer = True
             return [line]
-        # Only process bridges if we have an overhang in this layer
-        elif line.startswith(self.lookup["bridge"]) and self.config.lower_surface and self.has_overhang_in_layer:
+        # Only process bridges if we have an overhang in this layer and within z range
+        elif (line.startswith(self.lookup["bridge"]) and self.config.lower_surface and 
+              self.has_overhang_in_layer and 
+              self.config.z_ini <= self.current_layer_height <= self.config.z_end):
             return self.handle_bridge_infill(line)
-        elif line.startswith(self.lookup["top_solid_infill"]) and self.config.top_surface:
+        # Only process top solid infill if within z range
+        elif (line.startswith(self.lookup["top_solid_infill"]) and self.config.top_surface and
+              self.config.z_ini <= self.current_layer_height <= self.config.z_end):
             return self.handle_top_solid_infill(line)
         elif line.startswith(self.lookup["type"]):
             return self.handle_type_change(line)
@@ -390,6 +397,12 @@ def parse_arguments():
                        help='Multiplier for bridge compensation factor (default: 3.0)')
     parser.add_argument('-minSupportDistance', type=float, default=0.1, 
                        help='Minimum distance to maintain from support structure (default: 0.1)')
+    parser.add_argument('-force', type=int, default=0, 
+                       help='Force processing mode, if using only paint-on fuzzyskin (default: 0)')
+    parser.add_argument('-zIni', type=float, default=0.0, 
+                       help='Initial Z height for processing (default: 0.0)')
+    parser.add_argument('-zEnd', type=float, default=10000.0, 
+                       help='Final Z height for processing (default: 10000.0)')
     return parser.parse_args()
 
 def main():
