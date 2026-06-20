@@ -457,6 +457,12 @@ class GCodeProcessor:
         z_match = re.search(r'Z([-+]?[0-9]*\.?[0-9]+)', line)
         if z_match:
             self.current_layer_height = float(z_match.group(1))
+            if self.previous_point is not None:
+                self.previous_point = (
+                    self.previous_point[0],
+                    self.previous_point[1],
+                    self.current_layer_height,
+                )
         return [line]
 
     def handle_movement_in_infill(self, line):
