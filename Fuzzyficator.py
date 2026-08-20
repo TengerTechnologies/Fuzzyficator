@@ -64,9 +64,9 @@ LOOKUP_TABLES = {
 class FuzzySkinConfig:
     def __init__(self, args):
         self.input_file = args.input_gcode
-        self.resolution = args.resolution if args.resolution is not None else 0.3
+        self.resolution = args.resolution
         self.z_min = args.zMin
-        self.z_max = args.zMax if args.zMax is not None else 0.3
+        self.z_max = args.zMax
         self.connect_walls = bool(args.connectWalls)
         self.fuzzy_speed = args.fuzzySpeed
         self.run = args.run
@@ -81,12 +81,23 @@ class FuzzySkinConfig:
         """Apply G-code settings if command line args weren't specified"""
         if self.resolution is None and point_dist is not None:
             self.resolution = point_dist
+        if self.resolution is None:
+            self.resolution = 0.3
         if self.z_max is None and thickness is not None:
             self.z_max = thickness
+        if self.z_max is None:
+            self.z_max = 0.3
         if self.run is None:
             self.run = 1 if fuzzy_enabled else 0
         if support_contact_dist is not None:
             self.support_contact_dist = support_contact_dist
+
+        if self.resolution <= 0:
+            logging.warning(f"Invalid resolution {self.resolution} (must be > 0); falling back to 0.3")
+            self.resolution = 0.3
+        if self.z_min > self.z_max:
+            logging.warning(f"zMin ({self.z_min}) is greater than zMax ({self.z_max}); swapping them")
+            self.z_min, self.z_max = self.z_max, self.z_min
 
 class GCodeProcessor:
     def __init__(self, config):
@@ -99,6 +110,7 @@ class GCodeProcessor:
         self.current_speed = None
         self.has_overhang_in_layer = False
         self.current_layer = None
+        self._warned_missing_support_contact = False
 
     @staticmethod
     def calculate_distance(point1, point2):
@@ -117,6 +129,7 @@ class GCodeProcessor:
             return []
         
         num_segments = max(1, int(distance / segment_length))
+        actual_segment_length = distance / num_segments
         points = []
         extrusion_per_segment = total_extrusion / num_segments
         
@@ -131,8 +144,17 @@ class GCodeProcessor:
 
             if self.in_bridge:
                 bridge_z_min = self.config.z_min - self.config.z_max
-                bridge_z_max = self.config.support_contact_dist - self.config.min_support_distance
-                
+                if self.config.support_contact_dist is None:
+                    if not self._warned_missing_support_contact:
+                        logging.warning(
+                            "No support contact distance detected in G-code; overhang fuzzy skin will not add "
+                            "extra downward displacement. Enable supports for the full lower-surface effect."
+                        )
+                        self._warned_missing_support_contact = True
+                    bridge_z_max = 0.0
+                else:
+                    bridge_z_max = self.config.support_contact_dist - self.config.min_support_distance
+
                 z_displacement = (0 if (i == 0 or i == num_segments) and self.config.connect_walls 
                                 else -random.uniform(bridge_z_min, bridge_z_max))
                 # Force the displacement to be applied
@@ -149,8 +171,8 @@ class GCodeProcessor:
             if not self.in_bridge:
                 z_new = max(self.current_layer_height, z_new)  
 
-            distance = math.sqrt(segment_length ** 2 + z_displacement ** 2)
-            compensation_factor = distance / segment_length if segment_length != 0 else 1
+            segment_hypotenuse = math.sqrt(actual_segment_length ** 2 + z_displacement ** 2)
+            compensation_factor = segment_hypotenuse / actual_segment_length if actual_segment_length != 0 else 1
             if self.in_bridge: 
                 compensation_factor = compensation_factor ** self.config.bridge_compensation_multiplier
             compensated_extrusion = (extrusion_per_segment * compensation_factor 
@@ -216,12 +238,19 @@ class GCodeProcessor:
         return fuzzy_skin_enabled, fuzzy_skin_point_dist, fuzzy_skin_thickness, support_contact_dist
 
     def process_movement_line(self, line):
-        coordinates = {param[0]: float(param[1:]) for param in line.split() if param[0] in 'XYZE'}
-        
+        code_part = line.split(';', 1)[0]
+        coordinates = {}
+        for param in code_part.split():
+            if param and param[0] in 'XYZE':
+                try:
+                    coordinates[param[0]] = float(param[1:])
+                except ValueError:
+                    logging.warning(f"Could not parse movement parameter {param!r} in line: {line.strip()}")
+
         current_point = (
             coordinates.get('X', self.previous_point[0] if self.previous_point else 0),
             coordinates.get('Y', self.previous_point[1] if self.previous_point else 0),
-            coordinates.get('Z', coordinates.get('Z', self.current_layer_height))
+            coordinates.get('Z', self.current_layer_height)
         )
         
         return current_point, coordinates.get('E', 0.0)
@@ -291,6 +320,7 @@ class GCodeProcessor:
 
     def handle_top_solid_infill(self, line):
         self.in_top_solid_infill = True
+        self.in_bridge = False
         self.previous_point = None
         result = [line]
         if self.config.fuzzy_speed is not None:
@@ -302,6 +332,7 @@ class GCodeProcessor:
 
     def handle_bridge_infill(self, line):
         self.in_bridge = True
+        self.in_top_solid_infill = False
         self.previous_point = None
         result = [line]
         if self.config.fuzzy_speed is not None:
@@ -376,13 +407,13 @@ def parse_arguments():
     parser.add_argument('--set-resolution', action='store_true', help='Indicate if -resolution was explicitly set')
     parser.add_argument('--set-zMax', action='store_true', help='Indicate if -zMax was explicitly set')
     parser.add_argument('input_gcode', type=str, help='Path to the input G-code file')
-    parser.add_argument('-resolution', type=float, help='Resolution for fuzzy skin interpolation')
+    parser.add_argument('-resolution', type=float, help='Resolution for fuzzy skin interpolation (falls back to the slicer fuzzy_skin_point_dist setting, then 0.3, if not set)')
     parser.add_argument('-zMin', type=float, default=0.0, help='Minimum Z displacement for fuzzy skin (default: 0.0)')
-    parser.add_argument('-zMax', type=float, default=0.3, help='Maximum Z displacement for fuzzy skin')
+    parser.add_argument('-zMax', type=float, help='Maximum Z displacement for fuzzy skin (falls back to the slicer fuzzy_skin_thickness setting, then 0.3, if not set)')
     parser.add_argument('-connectWalls', type=int, choices=[0, 1], default=1, help='Ensure first Z remains at wall height (default: 1)')
     parser.add_argument('-run', type=int, choices=[0, 1], help='Run the script or not')
     parser.add_argument('--set-run', action='store_true', help='Indicate if -run was explicitly set')
-    parser.add_argument('-compensateExtrusion', type=int, choices=[0, 1], default=1, help='Compensate extrusion for fuzzy skin segments (default: 0)')
+    parser.add_argument('-compensateExtrusion', type=int, choices=[0, 1], default=1, help='Compensate extrusion for fuzzy skin segments (default: 1)')
     parser.add_argument('-fuzzySpeed', type=float, help='Print speed for fuzzy skin sections (in mm/min)')
     parser.add_argument('-lowerSurface', type=int, choices=[0, 1], default=1, help='Apply fuzzy skin to lower surfaces (default: 1)')
     parser.add_argument('-topSurface', type=int, choices=[0, 1], default=1, help='Apply fuzzy skin to top surfaces (default: 1)')
